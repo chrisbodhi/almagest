@@ -8,5 +8,5 @@ Uses Zig 0.11.0
 Run tests with 
 
 ```sh
-zig test src/easter.zig
+zig build test
 ```
