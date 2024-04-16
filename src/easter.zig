@@ -14,7 +14,7 @@ const DivisionResult = struct {
     remainder: u16,
 };
 
-// Function to take numerator and denominator, and return quotient and remainder
+/// Function to take numerator and denominator, and return quotient and remainder
 fn get_quotient_and_remainder(num: u16, denom: u16) !DivisionResult {
     const quotient = num / denom;
     const remainder = try mod(u16, num, denom);

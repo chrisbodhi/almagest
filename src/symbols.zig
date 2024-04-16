@@ -1,60 +1,60 @@
-// Eccentricity of an orbit
+/// Eccentricity of an orbit
 pub var e = undefined;
-// Altitude above the horizon
+/// Altitude above the horizon
 pub var h = undefined;
-// radius vector, or disstance of a body to the sun, in AU
+/// radius vector, or disstance of a body to the sun, in AU
 pub var r_AU = undefined;
-// True anomaly
+/// True anomaly
 pub var v = undefined;
 
-// Azimuth
+/// Azimuth
 pub var A = undefined;
-// Hour angle
+/// Hour angle
 pub var H = undefined;
-// Mean anomaly
+/// Mean anomaly
 pub var M = undefined;
-// Distance from Earth to sun, in AU
+/// Distance from Earth to sun, in AU
 pub var R_AU = undefined;
-// Time in Julian centuries (36525 days) from J2000.0
+/// Time in Julian centuries (36525 days) from J2000.0
 pub var T = undefined;
 
-// Right ascension, measured in hours, minutes, and seconds
+/// Right ascension, measured in hours, minutes, and seconds
 pub var @"α" = undefined;
-// Declination
+/// Declination
 pub var @"δ" = undefined;
-// Obliquity of the ecliptic
+/// Obliquity of the ecliptic
 pub var @"ε" = undefined;
-// Sidereal time
+/// Sidereal time
 pub var @"θ" = undefined;
-// Sidereal time at Greenwich
+/// Sidereal time at Greenwich
 pub var GST = undefined;
-// Parallax
+/// Parallax
 pub var @"π" = undefined;
-// Time in Julian millennia (36250 days) from J2000.0
+/// Time in Julian millennia (36250 days) from J2000.0
 pub var @"τ" = undefined;
-// Geographical latitude
+/// Geographical latitude
 pub var @"φ" = undefined;
-// Geocentric latitude
+/// Geocentric latitude
 pub var @"φ_prime" = undefined;
 
-// Distance to Earth, in AU
+/// Distance to Earth, in AU
 pub var @"Δ" = undefined;
-// Difference in TD - UT (dynamical time and universal time)
+/// Difference in TD - UT (dynamical time and universal time)
 pub var @"ΔT" = undefined;
-// Nutation in obliquity
+/// Nutation in obliquity
 pub var @"Δε" = undefined;
-// Nutation in longitude
+/// Nutation in longitude
 pub var @"Δψ" = undefined;
 
-// Astronomical unit
+/// Astronomical unit
 pub var AU = undefined;
-// Integer part of a number
+/// Integer part of a number
 pub var INT: i64 = undefined;
-// Julian Day
+/// Julian Day
 pub var JD = undefined;
-// Julian Ephemeris Day
+/// Julian Ephemeris Day
 pub var JDE = undefined;
-// Dynamical time
+/// Dynamical time
 pub var TD = undefined;
-// Universal time
+/// Universal time
 pub var UT = undefined;
