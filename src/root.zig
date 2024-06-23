@@ -1,10 +1,18 @@
 const std = @import("std");
 const testing = std.testing;
 
-export fn add(a: i32, b: i32) i32 {
-    return a + b;
+const conversions = @import("conversions.zig");
+const julian_date = @import("julian_date.zig");
+const symbols = @import("symbols.zig");
+
+comptime {
+    // Necessary comptime assignments to trigger test runs
+    // using the later `test` block.
+    _ = conversions;
+    _ = julian_date;
+    _ = symbols;
 }
 
-test "basic add functionality" {
-    try testing.expect(add(3, 7) == 10);
+test {
+    testing.refAllDecls(@This());
 }

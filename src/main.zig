@@ -2,6 +2,7 @@ const std = @import("std");
 const testing = std.testing;
 
 const conversions = @import("conversions.zig");
+
 const degrees_to_radians = conversions.degrees_to_radians;
 const tame_float = conversions.tame_float;
 
