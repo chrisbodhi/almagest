@@ -4,10 +4,12 @@
 const std = @import("std");
 const testing = std.testing;
 
-/// Calculate T from the Julian Ephemeris Date
+/// Calculate T from the Julian Ephemeris Date (21.1)
 pub fn calc_T(jde: f64) f64 {
     return (jde - 2_451_545.0) / 36525.0;
 }
+
+pub fn calc_jde() f32 {}
 
 // TODO: revisit the check for Julian or Gregorian
 // TODO: accept a date struct, instead
