@@ -94,6 +94,14 @@ test "2024" {
     try expect(md.day == 31);
 }
 
+// Upcoming
+test "2025" {
+    const md = try easter_month_and_day(2025);
+
+    try expect(md.month == 4);
+    try expect(md.day == 20);
+}
+
 // Extreme example from the book
 test "2038" {
     const md = try easter_month_and_day(2038);
