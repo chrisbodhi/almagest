@@ -2,6 +2,11 @@
 name = "almagest"
 version = "0.0.1"
 edition = "2024"
+license = "MIT"
+description = "A library for orbital calculations"
+homepage = "https://github.com/chrisbodhi/almagest"
+repository = "https://github.com/chrisbodhi/almagest"
+readme = "README.md"
 
 [lib]
 crate-type = ["rlib"]
