@@ -5,11 +5,14 @@ use core::ops::{Add, Div, Mul, Sub};
 pub type Real = f64;
 
 /// Archimedes’ constant (π)
+#[allow(clippy::excessive_precision)]
 pub const PI: Real = 3.14159265358979323846264338327950288;
 /// The full circle constant (τ)
 /// Equal to 2π.
+#[allow(clippy::excessive_precision)]
 pub const TAU: Real = 6.28318530717958647692528676655900577;
 /// Euler's number (e)
+#[allow(clippy::excessive_precision)]
 pub const E: Real = 2.71828182845904523536028747135266250;
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
@@ -96,50 +99,68 @@ impl Display for MetersCubed {
 
 // MetersSquared operations
 impl MetersSquared {
-    pub const fn value(self) -> Real { self.0 }
+    pub const fn value(self) -> Real {
+        self.0
+    }
 }
 
-// MetersCubed operations  
+// MetersCubed operations
 impl MetersCubed {
-    pub const fn value(self) -> Real { self.0 }
+    pub const fn value(self) -> Real {
+        self.0
+    }
 }
 
 impl Add for MetersSquared {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self::Output { MetersSquared(self.0 + rhs.0) }
+    fn add(self, rhs: Self) -> Self::Output {
+        MetersSquared(self.0 + rhs.0)
+    }
 }
 
 impl Sub for MetersSquared {
     type Output = Self;
-    fn sub(self, rhs: Self) -> Self::Output { MetersSquared(self.0 - rhs.0) }
+    fn sub(self, rhs: Self) -> Self::Output {
+        MetersSquared(self.0 - rhs.0)
+    }
 }
 
 impl Mul<Real> for MetersSquared {
     type Output = Self;
-    fn mul(self, rhs: Real) -> Self::Output { MetersSquared(self.0 * rhs) }
+    fn mul(self, rhs: Real) -> Self::Output {
+        MetersSquared(self.0 * rhs)
+    }
 }
 
 impl Div<Real> for MetersSquared {
     type Output = Self;
-    fn div(self, rhs: Real) -> Self::Output { MetersSquared(self.0 / rhs) }
+    fn div(self, rhs: Real) -> Self::Output {
+        MetersSquared(self.0 / rhs)
+    }
 }
 
 // MetersSquared / Meters = Meters
 impl Div<Meters> for MetersSquared {
     type Output = Meters;
-    fn div(self, rhs: Meters) -> Self::Output { Meters(self.0 / rhs.0) }
+    fn div(self, rhs: Meters) -> Self::Output {
+        Meters(self.0 / rhs.0)
+    }
 }
 
 // Meters * MetersSquared = MetersCubed
 impl Mul<MetersSquared> for Meters {
     type Output = MetersCubed;
-    fn mul(self, rhs: MetersSquared) -> Self::Output { MetersCubed(self.0 * rhs.0) }
+    fn mul(self, rhs: MetersSquared) -> Self::Output {
+        MetersCubed(self.0 * rhs.0)
+    }
 }
 
 // Real * Meters = Meters (commutative scalar multiplication)
 impl Mul<Meters> for Real {
     type Output = Meters;
-    fn mul(self, rhs: Meters) -> Self::Output { Meters(self * rhs.0) }
+    fn mul(self, rhs: Meters) -> Self::Output {
+        Meters(self * rhs.0)
+    }
 }
 
 impl Sub for Meters {
@@ -172,7 +193,7 @@ mod units {
     use approx::assert_relative_eq;
 
     // === Basic Arithmetic Operations ===
-    
+
     #[test]
     fn meters_addition() {
         let a = Meters(10.0);
@@ -207,7 +228,7 @@ mod units {
     }
 
     // === Dimensional Analysis Tests ===
-    
+
     #[test]
     fn meters_multiplication_creates_area() {
         let length = Meters(4.0);
@@ -243,7 +264,7 @@ mod units {
     }
 
     // === Unit Conversion Tests ===
-    
+
     #[test]
     fn meters_convert_to_km() {
         let m = Meters(1_000.0);
@@ -259,7 +280,7 @@ mod units {
     }
 
     // === Constants and Special Values ===
-    
+
     #[test]
     fn meters_zero_constant() {
         assert_eq!(Meters::ZERO, Meters(0.0));
@@ -273,7 +294,7 @@ mod units {
     }
 
     // === Edge Cases and Error Conditions ===
-    
+
     #[test]
     fn meters_with_infinity() {
         let inf = Meters(Real::INFINITY);
@@ -305,7 +326,7 @@ mod units {
     }
 
     // === Eccentricity Validation Tests ===
-    
+
     #[test]
     fn eccentricity_valid_values() {
         assert!(Eccentricity::new(0.0).is_ok());
@@ -327,13 +348,13 @@ mod units {
     }
 
     // === Comparison and Ordering Tests ===
-    
+
     #[test]
     fn meters_comparison() {
         let a = Meters(5.0);
         let b = Meters(10.0);
         let c = Meters(5.0);
-        
+
         assert!(a < b);
         assert!(b > a);
         assert_eq!(a, c);
@@ -345,19 +366,19 @@ mod units {
     fn area_comparison() {
         let small = MetersSquared(5.0);
         let large = MetersSquared(10.0);
-        
+
         assert!(small < large);
         assert!(large > small);
     }
 
     // === Mathematical Properties ===
-    
+
     #[test]
     fn meters_associativity() {
         let a = Meters(2.0);
         let b = Meters(3.0);
         let c = Meters(4.0);
-        
+
         // Addition associativity: (a + b) + c = a + (b + c)
         assert_eq!((a + b) + c, a + (b + c));
     }
@@ -366,10 +387,10 @@ mod units {
     fn meters_commutativity() {
         let a = Meters(7.0);
         let b = Meters(11.0);
-        
+
         // Addition commutativity: a + b = b + a
         assert_eq!(a + b, b + a);
-        
+
         // Multiplication commutativity with dimensionality
         let area1: MetersSquared = a * b;
         let area2: MetersSquared = b * a;
@@ -381,13 +402,13 @@ mod units {
         let a = Meters(3.0);
         let b = Meters(4.0);
         let scalar = 2.0;
-        
+
         // Scalar distributivity: k(a + b) = ka + kb
         assert_eq!(scalar * (a + b), scalar * a + scalar * b);
     }
 
     // === Real-world Scale Tests ===
-    
+
     #[test]
     fn orbital_scale_calculations() {
         // Earth's radius
@@ -395,9 +416,9 @@ mod units {
         // ISS altitude
         let iss_altitude = Meters(408_000.0);
         let iss_orbit_radius = earth_radius + iss_altitude;
-        
+
         assert_relative_eq!(iss_orbit_radius.value(), 6_779_000.0, epsilon = 1.0);
-        
+
         // Check that we can compute orbital circumference (2πr)
         let circumference = iss_orbit_radius * (2.0 * PI);
         assert!(circumference.value() > 42_000_000.0); // ~42.6M meters
@@ -408,7 +429,7 @@ mod units {
         // Earth-Sun distance (1 AU)
         let au = Meters(149_597_870_700.0);
         let half_au = au / 2.0;
-        
+
         assert_relative_eq!(half_au.value(), 74_798_935_350.0, epsilon = 1.0);
     }
 
