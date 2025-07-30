@@ -1,6 +1,10 @@
 # almagest
 _an astronomical library_
 
+⚠️ This library is in active development. ⚠️
+⚠️ As such, there are no guarantees of API stability ⚠️
+⚠️ or even correctness. ⚠️
+
 Rust edition 2024
 
 >Keep in mind that I lay no claim to having discovered these things
