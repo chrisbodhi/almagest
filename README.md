@@ -1,19 +1,14 @@
 # almagest
 _an astronomical library_
 
-⚠️ This library is in active development. ⚠️
-⚠️ As such, there are no guarantees of API stability ⚠️
-⚠️ or even correctness. ⚠️
+⚠️ This library is in active development. As such, there are no guarantees of API stability or even correctness. ⚠️
 
 Rust edition 2024
 
->Keep in mind that I lay no claim to having discovered these things
->
->through my own skill. I am but an ignorant compiler of the works of
->
->ancient astronomers, and have but put their material into my own
->
->words for your instruction; and with this sword shall I slay envy.
+>Keep in mind that I lay no claim to having discovered these things<br/>
+>through my own skill. I am but an ignorant compiler of the works of<br/>
+>ancient astronomers, and have but put their material into my own<br/>
+>words for your instruction; and with this sword shall I slay envy.<br/>
 
 &mdash; Geoffrey Chaucer, _Prologue of his Treatise on the Astrolabe_, by way of Albert Waugh in _Sundials: Their Theory and Construction_
 
