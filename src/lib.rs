@@ -1,8 +1,8 @@
 #![no_std]
 
 pub mod kepler;
+pub mod tethers;
 pub mod utils;
-// pub mod vectors;
 
 #[cfg(test)]
 mod tests {

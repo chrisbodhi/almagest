@@ -5,18 +5,37 @@ use core::ops::{Add, Div, Mul, Sub};
 pub type Real = f64;
 
 /// Archimedes’ constant (π)
-#[allow(clippy::excessive_precision)]
-pub const PI: Real = 3.14159265358979323846264338327950288;
+pub const PI: Real = core::f64::consts::PI;
+
 /// The full circle constant (τ)
 /// Equal to 2π.
-#[allow(clippy::excessive_precision)]
-pub const TAU: Real = 6.28318530717958647692528676655900577;
+pub const TAU: Real = core::f64::consts::TAU;
+
 /// Euler's number (e)
-#[allow(clippy::excessive_precision)]
-pub const E: Real = 2.71828182845904523536028747135266250;
+pub const E: Real = core::f64::consts::E;
+
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct MetersCubedPerKilogramSecondSquared(pub Real);
+
+/// The gravitational constant, G:
+/// m^3/kg*s²
+pub const G: MetersCubedPerKilogramSecondSquared = MetersCubedPerKilogramSecondSquared(6.6743e-11);
+
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct Kilograms(pub Real);
+
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct Seconds(pub Real);
+
+// TODO: Div (radians, second) -> RadiansPerSecond
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct RadiansPerSecond(pub Real);
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Meters(pub Real);
+
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct MetersPerSecond(pub Real);
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Kilometers(pub Real);
@@ -145,6 +164,17 @@ impl Div<Meters> for MetersSquared {
     fn div(self, rhs: Meters) -> Self::Output {
         Meters(self.0 / rhs.0)
     }
+}
+
+impl Div<Seconds> for Meters {
+    type Output = MetersPerSecond;
+    fn div(self, rhs: Seconds) -> Self::Output {
+        MetersPerSecond(self.0 / rhs.0)
+    }
+}
+
+pub fn main() {
+    let _r = Meters(3.3) / Seconds(0.1);
 }
 
 // Meters * MetersSquared = MetersCubed

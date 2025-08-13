@@ -7,18 +7,13 @@ pub struct Point {
     x: Meters,
     y: Meters,
 }
-// impl Point {
-//     pub fn new(x: Meters, y: Meters) -> Self {
-//         Point(x, y)
-//     }
-// }
 
 pub struct Ellipse {
-    // Eccentricity
+    /// Eccentricity
     e: Eccentricity,
-    // Primary focus
+    /// Primary focus
     f: Point,
-    // Radius of periapsis
+    /// Radius of periapsis
     r_p: Meters,
 }
 
