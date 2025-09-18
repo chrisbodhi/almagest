@@ -1,0 +1,24 @@
+[package]
+name = "almagest"
+description = "A library for orbital calculations"
+readme = "../README.md"
+exclude = [".github/*"]
+
+# Inherit shared workspace metadata
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lib]
+# Pure Rust library - no WASM concerns
+crate-type = ["rlib"]
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+approx.workspace = true
+libm.workspace = true
