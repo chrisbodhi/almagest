@@ -1,7 +1,7 @@
 .DS_Store
 *.org
 
-
 # Added by cargo
-
 /target
+
+.claude/settings.local.json

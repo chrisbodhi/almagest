@@ -1,21 +1,17 @@
-[package]
-name = "almagest"
-version = "0.0.1"
+[workspace]
+members = ["almagest", "almagest-wasm"]
+resolver = "2"
+
+[workspace.package]
 edition = "2024"
 license = "MIT"
-description = "A library for orbital calculations"
 homepage = "https://github.com/chrisbodhi/almagest"
 repository = "https://github.com/chrisbodhi/almagest"
-readme = "README.md"
-exclude = [".github/*"]
+version = "0.0.1"
 
-[lib]
-crate-type = ["rlib"]
-
-[features]
-default = ["std"]
-std = []
-
-[dependencies]
+# Shared dependencies across workspace
+[workspace.dependencies]
+almagest = { path = "almagest" }
 approx = "0.5.1"
 libm = "0.2.15"
+wasm-bindgen = "0.2"
