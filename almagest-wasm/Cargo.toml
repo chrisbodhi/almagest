@@ -1,0 +1,22 @@
+[package]
+name = "almagest-wasm"
+description = "WebAssembly bindings for the almagest orbital mechanics library"
+
+# Inherit shared workspace metadata
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lib]
+# WASM-specific crate type
+crate-type = ["cdylib"]
+
+[dependencies]
+almagest.workspace = true
+wasm-bindgen.workspace = true
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.45"
+approx.workspace = true
