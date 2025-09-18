@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Momentum Exchange Tether Visualization</title>
+        <style>
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                color: white;
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 400px;
+                gap: 30px;
+                align-items: start;
+            }
+
+            .visualization {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 30px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .controls {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 25px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            #canvas {
+                width: 100%;
+                height: 600px;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 2.5em;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                grid-column: 1 / -1;
+            }
+
+            h2 {
+                color: #a8d8ff;
+                margin-bottom: 15px;
+                font-size: 1.3em;
+            }
+
+            .slider-group {
+                margin-bottom: 25px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #e0f0ff;
+            }
+
+            input[type="range"] {
+                width: 100%;
+                height: 8px;
+                border-radius: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                outline: none;
+                margin-bottom: 10px;
+            }
+
+            input[type="range"]::-webkit-slider-thumb {
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #4fc3f7;
+                cursor: pointer;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #4fc3f7;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            .value-display {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-family: "Courier New", monospace;
+                font-size: 0.9em;
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .calculations {
+                margin-top: 30px;
+                padding: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+
+            .calc-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 12px;
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .calc-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .calc-label {
+                font-weight: 500;
+                color: #b8e6ff;
+            }
+
+            .calc-value {
+                font-family: "Courier New", monospace;
+                color: #4fc3f7;
+                font-weight: bold;
+            }
+
+            .description {
+                margin-top: 25px;
+                padding: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                font-size: 0.9em;
+                line-height: 1.6;
+                color: #e8f4ff;
+            }
+
+            .error {
+                color: #ffab91;
+                font-style: italic;
+                margin-top: 10px;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+
+                h1 {
+                    font-size: 2em;
+                }
+
+                .visualization {
+                    padding: 20px;
+                }
+
+                #canvas {
+                    height: 400px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Momentum Exchange Tether</h1>
+
+            <div class="visualization">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <h2>Tether Parameters</h2>
+
+                <div class="slider-group">
+                    <label for="altitude">Orbit Altitude (km)</label>
+                    <input
+                        type="range"
+                        id="altitude"
+                        min="300"
+                        max="2000"
+                        value="800"
+                        step="50"
+                    />
+                    <div class="value-display" id="altitudeValue">800 km</div>
+                </div>
+
+                <div class="slider-group">
+                    <label for="diameter">Tether Length (km)</label>
+                    <input
+                        type="range"
+                        id="diameter"
+                        min="50"
+                        max="7000"
+                        value="200"
+                        step="10"
+                    />
+                    <div class="value-display" id="diameterValue">200 km</div>
+                </div>
+
+                <div class="slider-group">
+                    <label for="material"
+                        >Material Tensile Strength (GPa)</label
+                    >
+                    <input
+                        type="range"
+                        id="material"
+                        min="1"
+                        max="10"
+                        value="5.9"
+                        step="0.1"
+                    />
+                    <div class="value-display" id="materialValue">
+                        5.9 GPa (PBO-like)
+                    </div>
+                </div>
+
+                <div class="slider-group">
+                    <label for="density">Material Density (kg/m³)</label>
+                    <input
+                        type="range"
+                        id="density"
+                        min="500"
+                        max="3000"
+                        value="1340"
+                        step="50"
+                    />
+                    <div class="value-display" id="densityValue">
+                        1340 kg/m³
+                    </div>
+                </div>
+
+                <div class="calculations">
+                    <h2>Orbital Parameters</h2>
+                    <div class="calc-item">
+                        <span class="calc-label">Orbital Velocity:</span>
+                        <span class="calc-value" id="orbitalVelocity"
+                            >- m/s</span
+                        >
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Angular Velocity:</span>
+                        <span class="calc-value" id="angularVelocity"
+                            >- rad/s</span
+                        >
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Orbital Period:</span>
+                        <span class="calc-value" id="orbitalPeriod"
+                            >- hours</span
+                        >
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Efficiency:</span>
+                        <span class="calc-value" id="efficiency">- %</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Char. Velocity:</span>
+                        <span class="calc-value" id="charVelocity">- m/s</span>
+                    </div>
+                </div>
+
+                <div class="description">
+                    <strong>Momentum Exchange Tether:</strong> This
+                    visualization shows a momentum exchange tether rotating
+                    around Earth's equator. The system has two arms: a
+                    counterweight (heavy mass) and a catcher/thrower (payload
+                    interface). The tether transfers momentum to payloads for
+                    orbital insertion or escape. <br /><br />
+                    <strong>Physics:</strong> Based on Moravec 1977 - a tether
+                    with diameter 1/3 of Earth's touches down 6 times per orbit.
+                    Smaller tethers spin slower, larger ones approach this 6:1
+                    ratio. <br /><br />
+                    <strong>View:</strong> Looking down from the north pole at
+                    the equatorial plane. The blue circle represents Earth, the
+                    white center is the tether hub, and the two extending arms
+                    represent the counterweight and catcher.
+                </div>
+
+                <div id="errorDisplay" class="error"></div>
+            </div>
+        </div>
+
+        <script type="module">
+            import initWasm, {
+                JsOrbitalParams,
+                JsTetherParams,
+                momentum_exchange_orbital_velocity_js,
+                momentum_exchange_angular_velocity_js,
+                momentum_exchange_orbital_period_js,
+                momentum_exchange_efficiency_js,
+                characteristic_velocity_js,
+                JsMaterial,
+            } from "../pkg/almagest_wasm.js";
+
+            // Earth constants
+            const EARTH_RADIUS = 6.371e6; // meters
+            const EARTH_MU = 3.986004418e14; // m³/s²
+
+            let canvas, ctx;
+            let animationId;
+            let currentAngle = 0; // Orbital position around Earth
+            let tetherSpinAngle = 0; // Tether rotation about its own center
+
+            // UI elements
+            let altitudeSlider, diameterSlider, materialSlider, densitySlider;
+            let altitudeValue, diameterValue, materialValue, densityValue;
+            let orbitalVelocityDisplay,
+                angularVelocityDisplay,
+                orbitalPeriodDisplay;
+            let efficiencyDisplay, charVelocityDisplay, errorDisplay;
+
+            async function initializeWasm() {
+                try {
+                    await initWasm();
+                    console.log("WASM initialized successfully");
+                    return true;
+                } catch (error) {
+                    console.error("Failed to initialize WASM:", error);
+                    return false;
+                }
+            }
+
+            function initCanvas() {
+                canvas = document.getElementById("canvas");
+                ctx = canvas.getContext("2d");
+
+                // Set canvas size
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * window.devicePixelRatio;
+                canvas.height = rect.height * window.devicePixelRatio;
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+                // Set canvas display size
+                canvas.style.width = rect.width + "px";
+                canvas.style.height = rect.height + "px";
+            }
+
+            function initControls() {
+                altitudeSlider = document.getElementById("altitude");
+                diameterSlider = document.getElementById("diameter");
+                materialSlider = document.getElementById("material");
+                densitySlider = document.getElementById("density");
+
+                altitudeValue = document.getElementById("altitudeValue");
+                diameterValue = document.getElementById("diameterValue");
+                materialValue = document.getElementById("materialValue");
+                densityValue = document.getElementById("densityValue");
+
+                orbitalVelocityDisplay =
+                    document.getElementById("orbitalVelocity");
+                angularVelocityDisplay =
+                    document.getElementById("angularVelocity");
+                orbitalPeriodDisplay = document.getElementById("orbitalPeriod");
+                efficiencyDisplay = document.getElementById("efficiency");
+                charVelocityDisplay = document.getElementById("charVelocity");
+                errorDisplay = document.getElementById("errorDisplay");
+
+                // Add event listeners
+                altitudeSlider.addEventListener("input", updateParameters);
+                diameterSlider.addEventListener("input", updateParameters);
+                materialSlider.addEventListener("input", updateParameters);
+                densitySlider.addEventListener("input", updateParameters);
+            }
+
+            function updateParameters() {
+                const altitude = parseFloat(altitudeSlider.value);
+                const diameter = parseFloat(diameterSlider.value);
+                const material = parseFloat(materialSlider.value);
+                const density = parseFloat(densitySlider.value);
+
+                // Update display values
+                altitudeValue.textContent = `${altitude} km`;
+                diameterValue.textContent = `${diameter} km`;
+                materialValue.textContent = `${material} GPa`;
+                densityValue.textContent = `${density} kg/m³`;
+
+                calculateOrbitalParameters(
+                    altitude,
+                    diameter,
+                    material,
+                    density,
+                );
+            }
+
+            function calculateOrbitalParameters(
+                altitude,
+                tetherLength,
+                materialStrength,
+                density,
+            ) {
+                try {
+                    errorDisplay.textContent = "";
+
+                    // Convert units
+                    const radius = EARTH_RADIUS + altitude * 1000; // altitude in km to radius in m
+                    const strengthPa = materialStrength * 1e9; // GPa to Pa
+
+                    // Create parameter objects
+                    const orbitalParams = new JsOrbitalParams(radius, EARTH_MU);
+                    const tetherParams = new JsTetherParams(
+                        strengthPa,
+                        density,
+                        radius,
+                        EARTH_MU,
+                    );
+                    const material = new JsMaterial(strengthPa, density);
+
+                    // Calculate orbital parameters
+                    const velocity =
+                        momentum_exchange_orbital_velocity_js(orbitalParams);
+                    const angularVel =
+                        momentum_exchange_angular_velocity_js(orbitalParams);
+                    const period =
+                        momentum_exchange_orbital_period_js(orbitalParams);
+                    const efficiency =
+                        momentum_exchange_efficiency_js(tetherParams);
+                    const charVel = characteristic_velocity_js(material);
+
+                    // Update displays
+                    orbitalVelocityDisplay.textContent = `${Math.round(velocity)} m/s`;
+                    angularVelocityDisplay.textContent = `${(angularVel * 1000).toFixed(3)} mrad/s`;
+                    orbitalPeriodDisplay.textContent = `${(period / 3600).toFixed(2)} hours`;
+                    efficiencyDisplay.textContent = `${(efficiency * 100).toFixed(1)}%`;
+                    charVelocityDisplay.textContent = `${Math.round(charVel)} m/s`;
+
+                    // Store current angular velocity for animation
+                    window.currentAngularVelocity = angularVel;
+                    window.currentOrbitalVelocity = velocity;
+
+                    console.log(
+                        "WASM - Stored angular velocity:",
+                        angularVel,
+                        "rad/s",
+                    );
+
+                    // Clean up WASM objects
+                    orbitalParams.free();
+                    tetherParams.free();
+                    material.free();
+                } catch (error) {
+                    console.error("Calculation error:", error);
+                    errorDisplay.textContent = `Error: ${error.message || error}`;
+
+                    // Reset displays
+                    orbitalVelocityDisplay.textContent = "- m/s";
+                    angularVelocityDisplay.textContent = "- rad/s";
+                    orbitalPeriodDisplay.textContent = "- hours";
+                    efficiencyDisplay.textContent = "- %";
+                    charVelocityDisplay.textContent = "- m/s";
+                }
+            }
+
+            function drawVisualization() {
+                const rect = canvas.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const altitude = parseFloat(altitudeSlider.value);
+                const tetherLength = parseFloat(diameterSlider.value);
+
+                // Clear canvas
+                ctx.clearRect(0, 0, rect.width, rect.height);
+
+                // Calculate scale (Earth radius to canvas units)
+                const earthDisplayRadius =
+                    Math.min(rect.width, rect.height) * 0.15;
+                const scale = earthDisplayRadius / EARTH_RADIUS;
+                const orbitDisplayRadius =
+                    earthDisplayRadius + altitude * 1000 * scale;
+                const tetherDisplayLength = tetherLength * 1000 * scale;
+
+                // Draw Earth
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, earthDisplayRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(100, 149, 237, 0.8)";
+                ctx.fill();
+                ctx.strokeStyle = "rgba(100, 149, 237, 1)";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Earth label
+                ctx.fillStyle = "white";
+                ctx.font = "14px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText("Earth", centerX, centerY + 5);
+
+                // Draw tether orbit path
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, orbitDisplayRadius, 0, 2 * Math.PI);
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw rotating momentum exchange tether (two spokes)
+                ctx.save();
+
+                // First, translate to Earth center and rotate for orbital position
+                ctx.translate(centerX, centerY);
+                ctx.rotate(currentAngle);
+
+                // Calculate tether hub position on orbit
+                const hubX = orbitDisplayRadius;
+                const hubY = 0;
+
+                // Now translate to tether hub and rotate for tether spin
+                ctx.translate(hubX, hubY);
+                ctx.rotate(tetherSpinAngle);
+
+                // Draw tether hub/center (at origin now)
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+                ctx.fill();
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw counterweight arm (heavier, shorter) - along positive X axis
+                const counterweightLength = tetherDisplayLength * 0.3;
+                const counterweightX = counterweightLength;
+                const counterweightY = 0;
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(counterweightX, counterweightY);
+                ctx.strokeStyle = "rgba(255, 100, 100, 0.9)"; // Red for counterweight
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // Draw counterweight mass
+                ctx.beginPath();
+                ctx.arc(counterweightX, counterweightY, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(255, 100, 100, 0.9)";
+                ctx.fill();
+                ctx.strokeStyle = "rgba(200, 50, 50, 1)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Draw catcher/thrower arm (lighter, longer) - along negative X axis
+                const catcherLength = tetherDisplayLength * 0.7;
+                const catcherX = -catcherLength;
+                const catcherY = 0;
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(catcherX, catcherY);
+                ctx.strokeStyle = "rgba(100, 255, 100, 0.9)"; // Green for catcher
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Draw catcher/payload interface
+                ctx.beginPath();
+                ctx.arc(catcherX, catcherY, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = "rgba(100, 255, 100, 0.9)";
+                ctx.fill();
+                ctx.strokeStyle = "rgba(50, 200, 50, 1)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.restore();
+
+                // Draw velocity vector
+                const velocityScale = 0.002; // Scale for velocity vector
+                const velocity = window.currentOrbitalVelocity || 7000; // Default value
+                const vectorLength = velocity * velocityScale;
+
+                const vectorStartX =
+                    centerX +
+                    Math.cos(currentAngle + Math.PI / 2) * orbitDisplayRadius;
+                const vectorStartY =
+                    centerY +
+                    Math.sin(currentAngle + Math.PI / 2) * orbitDisplayRadius;
+                const vectorEndX =
+                    vectorStartX +
+                    Math.cos(currentAngle + Math.PI / 2) * vectorLength;
+                const vectorEndY =
+                    vectorStartY +
+                    Math.sin(currentAngle + Math.PI / 2) * vectorLength;
+
+                ctx.beginPath();
+                ctx.moveTo(vectorStartX, vectorStartY);
+                ctx.lineTo(vectorEndX, vectorEndY);
+                ctx.strokeStyle = "#4fc3f7";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Draw arrowhead
+                const arrowSize = 8;
+                ctx.beginPath();
+                ctx.moveTo(vectorEndX, vectorEndY);
+                ctx.lineTo(
+                    vectorEndX -
+                        arrowSize * Math.cos(currentAngle + Math.PI / 2 - 0.3),
+                    vectorEndY -
+                        arrowSize * Math.sin(currentAngle + Math.PI / 2 - 0.3),
+                );
+                ctx.moveTo(vectorEndX, vectorEndY);
+                ctx.lineTo(
+                    vectorEndX -
+                        arrowSize * Math.cos(currentAngle + Math.PI / 2 + 0.3),
+                    vectorEndY -
+                        arrowSize * Math.sin(currentAngle + Math.PI / 2 + 0.3),
+                );
+                ctx.stroke();
+
+                // Draw altitude and tether length labels
+                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                ctx.font = "12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(
+                    `${altitude} km altitude`,
+                    centerX,
+                    rect.height - 45,
+                );
+                ctx.fillText(
+                    `${tetherLength} km tether length`,
+                    centerX,
+                    rect.height - 30,
+                );
+            }
+
+            function animate() {
+                // Update both orbital motion and tether spin
+                const calculatedAngularVelocity = window.currentAngularVelocity;
+                let orbitalAngularVelocity;
+
+                if (
+                    calculatedAngularVelocity &&
+                    calculatedAngularVelocity > 0
+                ) {
+                    orbitalAngularVelocity = calculatedAngularVelocity;
+                } else {
+                    // Fallback: Use a visible constant rotation
+                    orbitalAngularVelocity = 0.005; // 5 mrad/s for clearly visible rotation
+                }
+
+                const deltaTime = 0.016; // ~60 FPS (16ms)
+
+                // Orbital motion (tether center moving around Earth)
+                const orbitalSpeedMultiplier = 500; // Slower for orbital motion
+                currentAngle +=
+                    orbitalAngularVelocity * deltaTime * orbitalSpeedMultiplier;
+
+                // Tether spin (rotation about its own center)
+                // Based on Moravec 1977: A tether 1/3 Earth's diameter touches down 6 times per orbit
+                // So spin rate ≈ 6 * orbital rate for large tethers
+                // For smaller tethers, the ratio is lower. Let's calculate based on tether size.
+                const earthDiameter = EARTH_RADIUS * 2;
+                const currentTetherLength = parseFloat(diameterSlider.value);
+                const tetherDiameter = currentTetherLength * 1000 * 2; // Convert km to m, get diameter
+                const diameterRatio = tetherDiameter / earthDiameter;
+
+                // Spin rate scales roughly with diameter ratio (simplified model)
+                // Small tethers: ~1x orbital rate, Large tethers (1/3 Earth): ~6x orbital rate
+                const spinMultiplier = 1 + diameterRatio * 15; // Scales from 1x to 6x
+                const tetherSpinRate = orbitalAngularVelocity * spinMultiplier;
+
+                const spinSpeedMultiplier = 500; // Much more reasonable animation speed
+                tetherSpinAngle +=
+                    tetherSpinRate * deltaTime * spinSpeedMultiplier;
+
+                // Keep angles in reasonable range to prevent overflow
+                if (currentAngle > 2 * Math.PI) {
+                    currentAngle -= 2 * Math.PI;
+                }
+                if (tetherSpinAngle > 2 * Math.PI) {
+                    tetherSpinAngle -= 2 * Math.PI;
+                }
+
+                drawVisualization();
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Initialize everything
+            async function initializeApp() {
+                initCanvas();
+                initControls();
+
+                const wasmLoaded = await initializeWasm();
+                if (!wasmLoaded) {
+                    errorDisplay.textContent =
+                        "Physics calculations unavailable - WASM module failed to load";
+                    console.error(
+                        "WASM module failed to load - orbital mechanics calculations disabled",
+                    );
+                    return; // Don't proceed if WASM fails
+                }
+
+                // Initial calculation and animation
+                updateParameters();
+                animate();
+
+                // Handle window resize
+                window.addEventListener("resize", () => {
+                    initCanvas();
+                });
+            }
+
+            // Start the application
+            initializeApp();
+        </script>
+    </body>
+</html>

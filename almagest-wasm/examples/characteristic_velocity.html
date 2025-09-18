@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Characteristic Velocity Calculator - Almagest</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+                color: #e6e6e6;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 10px;
+                color: #00d4ff;
+                font-size: 2.5rem;
+                text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            }
+
+            .subtitle {
+                text-align: center;
+                margin-bottom: 40px;
+                color: #a0a0a0;
+                font-style: italic;
+            }
+
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+
+            .panel {
+                background: rgba(26, 26, 62, 0.8);
+                border-radius: 15px;
+                padding: 30px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .panel h2 {
+                color: #00d4ff;
+                margin-bottom: 20px;
+                font-size: 1.5rem;
+            }
+
+            .slider-container {
+                margin-bottom: 25px;
+            }
+
+            .slider-label {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                font-weight: 500;
+            }
+
+            .slider {
+                width: 100%;
+                height: 8px;
+                border-radius: 5px;
+                background: #2a2a4e;
+                outline: none;
+                appearance: none;
+                margin-bottom: 15px;
+            }
+
+            .slider::-webkit-slider-thumb {
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #00d4ff;
+                cursor: pointer;
+                box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            }
+
+            .slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #00d4ff;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            }
+
+            .result-display {
+                background: rgba(0, 212, 255, 0.1);
+                border: 2px solid #00d4ff;
+                border-radius: 10px;
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .result-value {
+                font-size: 3rem;
+                font-weight: bold;
+                color: #00d4ff;
+                text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            }
+
+            .result-unit {
+                font-size: 1.2rem;
+                color: #a0a0a0;
+                margin-left: 10px;
+            }
+
+            .materials-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .material-tile {
+                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                padding: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+            }
+
+            .material-tile:hover {
+                border-color: #00d4ff;
+                box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+                transform: translateY(-2px);
+            }
+
+            .material-name {
+                font-weight: bold;
+                color: #00d4ff;
+                margin-bottom: 8px;
+            }
+
+            .material-props {
+                font-size: 0.9rem;
+                color: #a0a0a0;
+                line-height: 1.4;
+            }
+
+            .material-velocity {
+                font-weight: bold;
+                color: #fff;
+                margin-top: 8px;
+            }
+
+            .info-section {
+                background: rgba(26, 26, 62, 0.8);
+                border-radius: 15px;
+                padding: 30px;
+                margin-top: 40px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .info-section h3 {
+                color: #00d4ff;
+                margin-bottom: 15px;
+                font-size: 1.3rem;
+            }
+
+            .info-section p {
+                margin-bottom: 15px;
+                line-height: 1.6;
+                color: #d0d0d0;
+            }
+
+            .formula {
+                background: rgba(0, 0, 0, 0.3);
+                border-left: 4px solid #00d4ff;
+                padding: 15px;
+                margin: 20px 0;
+                font-family: "Courier New", monospace;
+                border-radius: 5px;
+            }
+
+            .formula-text {
+                font-size: 1.2rem;
+                color: #00d4ff;
+                text-align: center;
+            }
+
+            .performance-indicator {
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 8px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .perf-exceptional {
+                background: rgba(255, 215, 0, 0.2);
+                color: #ffd700;
+            }
+            .perf-excellent {
+                background: rgba(0, 255, 0, 0.2);
+                color: #00ff00;
+            }
+            .perf-good {
+                background: rgba(0, 212, 255, 0.2);
+                color: #00d4ff;
+            }
+            .perf-fair {
+                background: rgba(255, 165, 0, 0.2);
+                color: #ffa500;
+            }
+            .perf-poor {
+                background: rgba(255, 0, 0, 0.2);
+                color: #ff4444;
+            }
+
+            @media (max-width: 768px) {
+                .main-content {
+                    grid-template-columns: 1fr;
+                }
+
+                .materials-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                h1 {
+                    font-size: 2rem;
+                }
+
+                .result-value {
+                    font-size: 2rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Characteristic Velocity Calculator</h1>
+            <p class="subtitle">
+                Interactive exploration of material properties for momentum
+                exchange tethers
+            </p>
+            <div
+                id="wasm-status"
+                style="
+                    text-align: center;
+                    margin-bottom: 20px;
+                    font-size: 0.9rem;
+                    color: #a0a0a0;
+                "
+            ></div>
+
+            <div class="main-content">
+                <div class="panel">
+                    <h2>Material Properties</h2>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Tensile Strength</span>
+                            <span id="tensile-value">5.9 GPa</span>
+                        </div>
+                        <input
+                            type="range"
+                            id="tensile-slider"
+                            class="slider"
+                            min="0.1"
+                            max="20"
+                            step="0.1"
+                            value="5.9"
+                        />
+                        <div
+                            style="
+                                font-size: 0.8rem;
+                                color: #a0a0a0;
+                                margin-bottom: 15px;
+                            "
+                        >
+                            Range: 0.1 - 20 GPa
+                        </div>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Density</span>
+                            <span id="density-value">1340 kg/m³</span>
+                        </div>
+                        <input
+                            type="range"
+                            id="density-slider"
+                            class="slider"
+                            min="500"
+                            max="8000"
+                            step="10"
+                            value="1340"
+                        />
+                        <div style="font-size: 0.8rem; color: #a0a0a0">
+                            Range: 500 - 8000 kg/m³
+                        </div>
+                    </div>
+
+                    <div class="result-display">
+                        <div class="result-value" id="result-value">2967</div>
+                        <span class="result-unit">m/s</span>
+                        <div
+                            class="performance-indicator"
+                            id="performance-indicator"
+                        >
+                            ⭐ Excellent
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Material Presets</h2>
+                    <div class="materials-grid" id="materials-grid"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>What is Characteristic Velocity?</h3>
+                <p>
+                    Characteristic velocity (v<sub>c</sub>) is a fundamental
+                    parameter in space tether systems that represents the
+                    maximum theoretical velocity that can be achieved by a
+                    tether material. It's essentially the speed at which stress
+                    waves propagate through the material.
+                </p>
+
+                <div class="formula">
+                    <div class="formula-text">v<sub>c</sub> = √(2σ/ρ)</div>
+                </div>
+
+                <p>
+                    Where <strong>σ</strong> is the tensile strength (Pa) and
+                    <strong>ρ</strong> is the material density (kg/m³).
+                </p>
+
+                <h3>Momentum Exchange Tethers</h3>
+                <p>
+                    Momentum exchange tethers are rotating space structures that
+                    can transfer momentum between different orbital altitudes
+                    without expending propellant. They work by using the orbital
+                    mechanics principle that objects at different altitudes have
+                    different orbital velocities.
+                </p>
+
+                <p>
+                    The characteristic velocity determines the maximum tip speed
+                    the tether can achieve before the centrifugal forces exceed
+                    the material's tensile strength. Higher characteristic
+                    velocities enable:
+                </p>
+
+                <ul style="margin: 15px 0; padding-left: 30px">
+                    <li>
+                        <strong>Greater ΔV capability:</strong> More velocity
+                        change for payload transfers
+                    </li>
+                    <li>
+                        <strong>Larger operational envelope:</strong> Ability to
+                        reach higher or lower orbits
+                    </li>
+                    <li>
+                        <strong>Better mass efficiency:</strong> Less tether
+                        mass needed for the same performance
+                    </li>
+                    <li>
+                        <strong>Higher payload capacity:</strong> Can handle
+                        heavier payloads at operational speeds
+                    </li>
+                </ul>
+
+                <p>
+                    Materials with high specific strength (strength-to-weight
+                    ratio) are ideal for tether applications, which is why
+                    advanced fibers like PBO and theoretical carbon nanotubes
+                    show such promising characteristic velocities.
+                </p>
+            </div>
+        </div>
+
+        <script>
+            // Material database based on the Rust codebase
+            const materials = [
+                {
+                    name: "PBO (Zylon)",
+                    tensileStrength: 5.9, // GPa
+                    density: 1340, // kg/m³
+                    description:
+                        "Poly(p-phenylene-2,6-benzobisoxazole) - highest strength fiber",
+                },
+                {
+                    name: "Carbon Nanotube",
+                    tensileStrength: 11.0, // GPa (theoretical)
+                    density: 1600, // kg/m³
+                    description: "Theoretical single-wall nanotube properties",
+                },
+                {
+                    name: "Kevlar 49",
+                    tensileStrength: 3.6, // GPa
+                    density: 1440, // kg/m³
+                    description: "Aramid fiber, proven aerospace material",
+                },
+                {
+                    name: "UHMWPE",
+                    tensileStrength: 3.5, // GPa
+                    density: 970, // kg/m³
+                    description: "Ultra-high molecular weight polyethylene",
+                },
+                {
+                    name: "Piano Wire",
+                    tensileStrength: 2.55, // GPa
+                    density: 7850, // kg/m³
+                    description: "High-carbon steel wire",
+                },
+                {
+                    name: "Titanium 6Al-4V",
+                    tensileStrength: 1.17, // GPa
+                    density: 4430, // kg/m³
+                    description: "Aerospace-grade titanium alloy",
+                },
+                {
+                    name: "Aluminum 6061-T6",
+                    tensileStrength: 0.31, // GPa
+                    density: 2700, // kg/m³
+                    description: "Common structural aluminum alloy",
+                },
+                {
+                    name: "Carbon Fiber UD",
+                    tensileStrength: 4.9, // GPa
+                    density: 1600, // kg/m³
+                    description: "Unidirectional carbon fiber composite",
+                },
+            ];
+
+            // DOM elements
+            const tensileSlider = document.getElementById("tensile-slider");
+            const densitySlider = document.getElementById("density-slider");
+            const tensileValue = document.getElementById("tensile-value");
+            const densityValue = document.getElementById("density-value");
+            const resultValue = document.getElementById("result-value");
+            const performanceIndicator = document.getElementById(
+                "performance-indicator",
+            );
+            const materialsGrid = document.getElementById("materials-grid");
+
+            // WASM module and calculation function
+            let wasmModule = null;
+            let JsMaterial = null;
+            let characteristic_velocity_js = null;
+
+            // Initialize WASM module
+            async function initWasm() {
+                try {
+                    const wasmInit = await import("../pkg/almagest_wasm.js");
+                    wasmModule = await wasmInit.default();
+                    JsMaterial = wasmInit.JsMaterial;
+                    characteristic_velocity_js =
+                        wasmInit.characteristic_velocity_js;
+                    return true;
+                } catch (error) {
+                    console.warn(
+                        "WASM failed to load, falling back to JavaScript implementation:",
+                        error,
+                    );
+                    return false;
+                }
+            }
+
+            // Calculate characteristic velocity using WASM only
+            function calculateCharacteristicVelocity(
+                tensileStrengthGPa,
+                densityKgM3,
+            ) {
+                if (wasmModule && JsMaterial && characteristic_velocity_js) {
+                    try {
+                        // Convert GPa to Pa for WASM function
+                        const tensileStrengthPa = tensileStrengthGPa * 1e9;
+                        const material = new JsMaterial(
+                            tensileStrengthPa,
+                            densityKgM3,
+                        );
+                        const result = characteristic_velocity_js(material);
+                        material.free(); // Clean up WASM memory
+                        return result;
+                    } catch (error) {
+                        console.error("WASM calculation failed:", error);
+                        throw new Error(
+                            "Physics calculation unavailable - WASM module failed",
+                        );
+                    }
+                }
+
+                throw new Error(
+                    "Physics calculation unavailable - WASM module not loaded",
+                );
+            }
+
+            // Get performance rating
+            function getPerformanceRating(velocity) {
+                if (velocity > 4000)
+                    return {
+                        text: "🌟 Exceptional",
+                        class: "perf-exceptional",
+                    };
+                if (velocity > 2500)
+                    return { text: "⭐ Excellent", class: "perf-excellent" };
+                if (velocity > 1500)
+                    return { text: "✨ Good", class: "perf-good" };
+                if (velocity > 800)
+                    return { text: "💫 Fair", class: "perf-fair" };
+                return { text: "⚡ Poor", class: "perf-poor" };
+            }
+
+            // Update display
+            function updateDisplay() {
+                const tensileStrength = parseFloat(tensileSlider.value);
+                const density = parseFloat(densitySlider.value);
+
+                tensileValue.textContent = `${tensileStrength.toFixed(1)} GPa`;
+                densityValue.textContent = `${density} kg/m³`;
+
+                try {
+                    const velocity = calculateCharacteristicVelocity(
+                        tensileStrength,
+                        density,
+                    );
+                    resultValue.textContent =
+                        Math.round(velocity).toLocaleString();
+
+                    const rating = getPerformanceRating(velocity);
+                    performanceIndicator.textContent = rating.text;
+                    performanceIndicator.className = `performance-indicator ${rating.class}`;
+                } catch (error) {
+                    console.error(
+                        "Failed to calculate characteristic velocity:",
+                        error,
+                    );
+                    resultValue.textContent = "Calculation unavailable";
+                    performanceIndicator.textContent = "❌ WASM Error";
+                    performanceIndicator.className =
+                        "performance-indicator error";
+                }
+            }
+
+            // Create material tiles
+            function createMaterialTiles() {
+                materialsGrid.innerHTML = "";
+
+                materials.forEach((material) => {
+                    let velocityDisplay = "Error";
+                    try {
+                        const velocity = calculateCharacteristicVelocity(
+                            material.tensileStrength,
+                            material.density,
+                        );
+                        velocityDisplay = `${Math.round(velocity)} m/s`;
+                    } catch (error) {
+                        console.error(
+                            `Failed to calculate velocity for ${material.name}:`,
+                            error,
+                        );
+                        velocityDisplay = "WASM Error";
+                    }
+
+                    const tile = document.createElement("div");
+                    tile.className = "material-tile";
+                    tile.innerHTML = `
+                    <div class="material-name">${material.name}</div>
+                    <div class="material-props">
+                        ${material.tensileStrength.toFixed(1)} GPa<br>
+                        ${material.density} kg/m³
+                    </div>
+                    <div class="material-velocity">${velocityDisplay}</div>
+                `;
+
+                    tile.addEventListener("click", () => {
+                        tensileSlider.value = material.tensileStrength;
+                        densitySlider.value = material.density;
+                        updateDisplay();
+
+                        // Visual feedback
+                        tile.style.transform = "scale(0.95)";
+                        setTimeout(() => {
+                            tile.style.transform = "translateY(-2px)";
+                        }, 150);
+                    });
+
+                    materialsGrid.appendChild(tile);
+                });
+            }
+
+            // Event listeners
+            tensileSlider.addEventListener("input", updateDisplay);
+            densitySlider.addEventListener("input", updateDisplay);
+
+            // Initialize
+            async function initialize() {
+                const statusElement = document.getElementById("wasm-status");
+
+                // Try to load WASM module
+                const wasmLoaded = await initWasm();
+                if (wasmLoaded) {
+                    console.log(
+                        "✨ Using Rust WASM implementation for calculations",
+                    );
+                    statusElement.innerHTML =
+                        "🦀 Powered by Rust WASM • Using native almagest library calculations";
+                    statusElement.style.color = "#00d4ff";
+                } else {
+                    console.log("⚡ Using JavaScript fallback implementation");
+                    statusElement.innerHTML =
+                        "⚡ Using JavaScript fallback implementation";
+                    statusElement.style.color = "#ffa500";
+                }
+
+                // Initialize UI
+                createMaterialTiles();
+                updateDisplay();
+            }
+
+            // Start the application
+            initialize();
+        </script>
+    </body>
+</html>
