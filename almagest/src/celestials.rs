@@ -22,7 +22,8 @@
 //! println!("Mars radius: {} km", MARS.radius.0);
 //!
 //! // Use in orbital calculations
-//! let earth_surface_gravity = calculate_surface_gravity(&EARTH);
+//! // TODO
+//! // let earth_surface_gravity = calculate_surface_gravity(&EARTH);
 //! ```
 //!
 //! ## Data Sources

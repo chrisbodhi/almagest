@@ -29,6 +29,18 @@ impl JsMaterial {
     }
 }
 
+fn handle_error(error_msg: &str) -> JsValue {
+    #[cfg(target_arch = "wasm32")]
+    {
+        JsValue::from_str(error_msg)
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        println!("Calculation failed: {}", error_msg);
+        JsValue::UNDEFINED
+    }
+}
+
 /// JS-friendly wrapper for characteristic_velocity that accepts a JsMaterial object.
 #[wasm_bindgen]
 pub fn characteristic_velocity_js(material: &JsMaterial) -> Result<f64, JsValue> {
@@ -36,17 +48,7 @@ pub fn characteristic_velocity_js(material: &JsMaterial) -> Result<f64, JsValue>
     let d = KilogramsPerMetersCubed(material.density);
     match characteristic_velocity(ts, d) {
         Ok(MetersPerSecond(val)) => Ok(val),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                // For native tests, use a placeholder error
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
@@ -109,16 +111,7 @@ pub fn momentum_exchange_orbital_velocity_js(params: &JsOrbitalParams) -> Result
 
     match momentum_exchange_orbital_velocity(radius, mu) {
         Ok(MetersPerSecond(val)) => Ok(val),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
@@ -130,16 +123,7 @@ pub fn momentum_exchange_orbital_period_js(params: &JsOrbitalParams) -> Result<f
 
     match momentum_exchange_orbital_period(radius, mu) {
         Ok(Seconds(val)) => Ok(val),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
@@ -151,16 +135,7 @@ pub fn momentum_exchange_angular_velocity_js(params: &JsOrbitalParams) -> Result
 
     match momentum_exchange_angular_velocity(radius, mu) {
         Ok(RadiansPerSecond(val)) => Ok(val),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
@@ -181,16 +156,7 @@ pub fn momentum_exchange_efficiency_js(params: &JsTetherParams) -> Result<f64, J
 
     match momentum_exchange_efficiency(&material, radius, mu) {
         Ok(efficiency) => Ok(efficiency),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
@@ -205,16 +171,7 @@ pub fn momentum_exchange_spin_rate_js(
 
     match momentum_exchange_spin_rate(tether, radius) {
         Ok(spin_multiplier) => Ok(spin_multiplier),
-        Err(e) => {
-            #[cfg(target_arch = "wasm32")]
-            {
-                Err(JsValue::from_str(e))
-            }
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                Err(JsValue::UNDEFINED)
-            }
-        }
+        Err(e) => Err(handle_error(e)),
     }
 }
 
