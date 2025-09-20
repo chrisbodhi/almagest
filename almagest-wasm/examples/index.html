@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Almagest - Interactive Astrodynamics Tools</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+                color: #e6e6e6;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            /* Animated constellation background */
+            .stars {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .star {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: #00d4ff;
+                border-radius: 50%;
+                animation: twinkle 4s infinite;
+            }
+
+            @keyframes twinkle {
+                0%,
+                100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 40px 20px;
+            }
+
+            /* Hero Section */
+            .hero {
+                text-align: center;
+                margin-bottom: 80px;
+                padding: 60px 0;
+                position: relative;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+                font-weight: 700;
+                color: #00d4ff;
+                margin-bottom: 20px;
+                text-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+                letter-spacing: -0.02em;
+            }
+
+            .hero .subtitle {
+                font-size: 1.5rem;
+                color: #a0c4ff;
+                margin-bottom: 30px;
+                font-weight: 300;
+                line-height: 1.4;
+            }
+
+            .hero .tagline {
+                font-size: 1.1rem;
+                color: #c0c0c0;
+                max-width: 600px;
+                margin: 0 auto 40px;
+                line-height: 1.6;
+            }
+
+            .wasm-badge {
+                display: inline-flex;
+                align-items: center;
+                background: rgba(0, 212, 255, 0.1);
+                border: 2px solid #00d4ff;
+                border-radius: 25px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                color: #00d4ff;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            .wasm-badge:hover {
+                background: rgba(0, 212, 255, 0.2);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            }
+
+            .wasm-badge::before {
+                content: "🦀";
+                margin-right: 8px;
+            }
+
+            /* Demo Gallery */
+            .demos-section {
+                margin-bottom: 80px;
+            }
+
+            .section-title {
+                text-align: center;
+                font-size: 2.5rem;
+                color: #00d4ff;
+                margin-bottom: 20px;
+                text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            }
+
+            .section-subtitle {
+                text-align: center;
+                font-size: 1.1rem;
+                color: #a0a0a0;
+                margin-bottom: 50px;
+                max-width: 700px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.6;
+            }
+
+            .demo-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+
+            .demo-card {
+                background: rgba(26, 26, 62, 0.8);
+                border-radius: 20px;
+                padding: 30px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .demo-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+                border-color: #00d4ff;
+            }
+
+            .demo-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #00d4ff, #0066cc);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .demo-card:hover::before {
+                transform: translateX(0);
+            }
+
+            .demo-card h3 {
+                color: #00d4ff;
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+                font-weight: 600;
+            }
+
+            .demo-card p {
+                color: #d0d0d0;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .demo-features {
+                list-style: none;
+                margin-bottom: 25px;
+            }
+
+            .demo-features li {
+                color: #a0c4ff;
+                margin-bottom: 8px;
+                position: relative;
+                padding-left: 20px;
+            }
+
+            .demo-features li::before {
+                content: "→";
+                position: absolute;
+                left: 0;
+                color: #00d4ff;
+                font-weight: bold;
+            }
+
+            .launch-button {
+                display: inline-flex;
+                align-items: center;
+                background: rgba(0, 212, 255, 0.1);
+                color: #00d4ff;
+                padding: 12px 20px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: 500;
+                border: 1px solid rgba(0, 212, 255, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .launch-button:hover {
+                background: rgba(0, 212, 255, 0.2);
+                transform: translateX(5px);
+            }
+
+            .launch-button::after {
+                content: "→";
+                margin-left: 8px;
+                transition: transform 0.3s ease;
+            }
+
+            .launch-button:hover::after {
+                transform: translateX(3px);
+            }
+
+            /* Coming Soon Cards */
+            .coming-soon {
+                opacity: 0.6;
+                pointer-events: none;
+            }
+
+            .coming-soon .launch-button {
+                background: rgba(255, 255, 255, 0.1);
+                color: #a0a0a0;
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+
+            /* Educational Content */
+            .education-section {
+                margin-bottom: 80px;
+            }
+
+            .content-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 30px;
+            }
+
+            .content-card {
+                background: rgba(26, 26, 62, 0.8);
+                border-radius: 15px;
+                padding: 30px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .content-card:hover {
+                border-color: rgba(0, 212, 255, 0.5);
+                box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            }
+
+            .content-card h3 {
+                color: #00d4ff;
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+                font-weight: 600;
+            }
+
+            .content-card p {
+                color: #d0d0d0;
+                line-height: 1.6;
+                margin-bottom: 15px;
+            }
+
+            .formula-highlight {
+                background: rgba(0, 0, 0, 0.4);
+                border-left: 4px solid #00d4ff;
+                padding: 15px;
+                margin: 20px 0;
+                border-radius: 5px;
+                font-family: "Courier New", monospace;
+                color: #00d4ff;
+                text-align: center;
+                font-size: 1.1rem;
+            }
+
+            /* Technical Details */
+            .tech-details {
+                background: rgba(26, 26, 62, 0.6);
+                border-radius: 20px;
+                padding: 40px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .tech-details h3 {
+                color: #00d4ff;
+                font-size: 2rem;
+                margin-bottom: 20px;
+                font-weight: 600;
+            }
+
+            .tech-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 30px;
+                margin-top: 30px;
+            }
+
+            .tech-item {
+                padding: 20px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .tech-item h4 {
+                color: #a0c4ff;
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+
+            .tech-item p {
+                color: #d0d0d0;
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+
+            /* Footer */
+            .footer {
+                text-align: center;
+                padding: 40px 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin-top: 60px;
+            }
+
+            .footer p {
+                color: #a0a0a0;
+                font-size: 0.9rem;
+            }
+
+            .footer a {
+                color: #00d4ff;
+                text-decoration: none;
+            }
+
+            .footer a:hover {
+                text-decoration: underline;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+
+                .hero .subtitle {
+                    font-size: 1.2rem;
+                }
+
+                .demo-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .content-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .tech-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .container {
+                    padding: 20px 10px;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .demo-card {
+                    padding: 20px;
+                }
+
+                .content-card {
+                    padding: 20px;
+                }
+
+                .tech-details {
+                    padding: 25px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Animated constellation background -->
+        <div class="stars" id="stars"></div>
+
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Almagest</h1>
+                <p class="subtitle">Interactive Astrodynamics Tools</p>
+                <p class="tagline">
+                    Explore the physics of space tethers, orbital mechanics, and
+                    advanced materials through interactive web demonstrations
+                    powered by Rust and WebAssembly.
+                </p>
+                <a href="#" class="wasm-badge">
+                    Powered by Rust WASM • Type-safe physics calculations
+                </a>
+            </section>
+
+            <!-- Demo Gallery -->
+            <section class="demos-section">
+                <h2 class="section-title">Interactive Demonstrations</h2>
+                <p class="section-subtitle">
+                    Hands-on tools for exploring space tether technology and
+                    orbital mechanics. Each demo runs advanced physics
+                    calculations in your browser using our Rust-compiled
+                    WebAssembly modules.
+                </p>
+
+                <div class="demo-grid">
+                    <a href="characteristic_velocity.html" class="demo-card">
+                        <h3>Characteristic Velocity Calculator</h3>
+                        <p>
+                            Explore how material properties determine the
+                            maximum performance of space tethers. Interactive
+                            sliders let you adjust tensile strength and density
+                            while seeing real-time characteristic velocity
+                            calculations.
+                        </p>
+                        <ul class="demo-features">
+                            <li>
+                                Real-time physics calculations using Rust WASM
+                            </li>
+                            <li>
+                                8 pre-loaded aerospace materials (PBO, Carbon
+                                Nanotubes, Kevlar)
+                            </li>
+                            <li>
+                                Performance rating system with visual feedback
+                            </li>
+                            <li>
+                                Educational content on momentum exchange tethers
+                            </li>
+                        </ul>
+                        <span class="launch-button">Launch Calculator</span>
+                    </a>
+
+                    <a href="momentum_exchange_tether.html" class="demo-card">
+                        <h3>Momentum Exchange Tether Visualization</h3>
+                        <p>
+                            Watch a momentum exchange tether system in action
+                            with real orbital mechanics. Adjust tether
+                            parameters and see how they affect orbital velocity,
+                            angular momentum, and system efficiency.
+                        </p>
+                        <ul class="demo-features">
+                            <li>Animated orbital mechanics simulation</li>
+                            <li>
+                                Interactive parameter adjustment (altitude,
+                                length, materials)
+                            </li>
+                            <li>
+                                Real-time efficiency and performance
+                                calculations
+                            </li>
+                            <li>Visual representation of tether dynamics</li>
+                        </ul>
+                        <span class="launch-button">Launch Visualization</span>
+                    </a>
+
+                    <div class="demo-card coming-soon">
+                        <h3>Orbital Transfer Optimizer</h3>
+                        <p>
+                            Optimize tether-assisted orbital transfers for
+                            maximum payload capacity and minimum energy
+                            requirements. Compare traditional propulsion with
+                            momentum exchange systems.
+                        </p>
+                        <ul class="demo-features">
+                            <li>Multi-body orbital mechanics</li>
+                            <li>Mission planning optimization</li>
+                            <li>Cost-benefit analysis tools</li>
+                            <li>Launch window calculations</li>
+                        </ul>
+                        <span class="launch-button">Coming Soon</span>
+                    </div>
+
+                    <div class="demo-card coming-soon">
+                        <h3>Tether Stress Analysis</h3>
+                        <p>
+                            Analyze stress distribution along rotating tethers
+                            under various loading conditions. Visualize material
+                            limits and safety factors in real-time.
+                        </p>
+                        <ul class="demo-features">
+                            <li>Finite element stress visualization</li>
+                            <li>Material failure analysis</li>
+                            <li>Safety factor calculations</li>
+                            <li>Dynamic loading scenarios</li>
+                        </ul>
+                        <span class="launch-button">Coming Soon</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Educational Content -->
+            <section class="education-section">
+                <h2 class="section-title">
+                    Understanding Space Tether Physics
+                </h2>
+                <p class="section-subtitle">
+                    Space tethers represent a revolutionary approach to
+                    propellantless propulsion, using orbital mechanics and
+                    advanced materials to transfer momentum without chemical
+                    rockets.
+                </p>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>🚀 Momentum Exchange Tethers</h3>
+                        <p>
+                            Momentum exchange tethers are rotating space
+                            structures that can transfer momentum between
+                            different orbital altitudes without expending
+                            propellant. They work by exploiting the fact that
+                            objects at different altitudes have different
+                            orbital velocities.
+                        </p>
+                        <p>
+                            When a payload is caught at the lower tip of a
+                            rotating tether and released at the upper tip, it
+                            gains velocity and altitude. The tether system loses
+                            a corresponding amount of momentum, which can be
+                            restored using attitude control systems or by
+                            catching payloads moving in the opposite direction.
+                        </p>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>🧬 Material Science Critical</h3>
+                        <p>
+                            The performance of space tethers is fundamentally
+                            limited by material properties. The characteristic
+                            velocity determines the maximum tip speed achievable
+                            before centrifugal forces exceed the material's
+                            tensile strength.
+                        </p>
+                        <div class="formula-highlight">
+                            v<sub>c</sub> = √(2σ/ρ)
+                        </div>
+                        <p>
+                            Where σ is tensile strength and ρ is density.
+                            Advanced fibers like PBO and theoretical carbon
+                            nanotubes offer exceptional characteristic
+                            velocities, enabling larger operational envelopes
+                            and higher payload capacities.
+                        </p>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>🌍 Orbital Mechanics Principles</h3>
+                        <p>
+                            Tether systems operate in the complex gravitational
+                            environment of Earth orbit, where altitude
+                            differences create velocity gradients. The tether
+                            must be precisely controlled to maintain stability
+                            while providing useful momentum transfer.
+                        </p>
+                        <p>
+                            Key parameters include orbital altitude, tether
+                            length, rotation rate, and the mass distribution
+                            along the tether. These determine the system's
+                            efficiency, operational envelope, and maximum
+                            payload capacity.
+                        </p>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>⚡ Revolutionary Applications</h3>
+                        <p>
+                            Space tethers could revolutionize access to space by
+                            dramatically reducing the cost of orbital transfers.
+                            Applications include:
+                        </p>
+                        <p>
+                            <strong>Payload Insertion:</strong> Lifting cargo
+                            from low orbits to higher orbits or escape
+                            trajectories<br />
+                            <strong>Atmospheric Skimming:</strong> Capturing
+                            payloads from suborbital trajectories<br />
+                            <strong>Interplanetary Transport:</strong> Providing
+                            high ΔV for deep space missions<br />
+                            <strong>Space Debris Mitigation:</strong> Deorbiting
+                            defunct satellites safely
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Details -->
+            <section class="tech-details">
+                <h3>Built with Cutting-Edge Technology</h3>
+                <p
+                    style="
+                        color: #d0d0d0;
+                        margin-bottom: 30px;
+                        font-size: 1.1rem;
+                    "
+                >
+                    Almagest combines the safety and performance of Rust with
+                    the accessibility of web browsers through WebAssembly,
+                    delivering precise physics calculations with guaranteed
+                    memory safety.
+                </p>
+
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <h4>🦀 Rust Core Library</h4>
+                        <p>
+                            Type-safe physics calculations with zero-cost
+                            abstractions. The core almagest library runs in
+                            no_std environments, making it suitable for embedded
+                            systems and spacecraft.
+                        </p>
+                    </div>
+
+                    <div class="tech-item">
+                        <h4>🕸️ WebAssembly Performance</h4>
+                        <p>
+                            Near-native performance in the browser with a
+                            compact ~16KB binary. WASM ensures consistent
+                            results across all platforms and devices.
+                        </p>
+                    </div>
+
+                    <div class="tech-item">
+                        <h4>🔬 Scientific Accuracy</h4>
+                        <p>
+                            All calculations use established physics principles
+                            and validated material properties. Results are
+                            reproducible and traceable to fundamental constants.
+                        </p>
+                    </div>
+
+                    <div class="tech-item">
+                        <h4>🛡️ Memory Safety</h4>
+                        <p>
+                            Rust's ownership system prevents memory leaks,
+                            buffer overflows, and data races, ensuring reliable
+                            operation even with complex physics calculations.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>
+                    Almagest © 2025 • Open source astrodynamics library •
+                    <a href="https://github.com/chrisbodhi/almagest"
+                        >View on GitHub</a
+                    >
+                </p>
+            </div>
+        </footer>
+
+        <script>
+            // Generate animated constellation background
+            function createStars() {
+                const starsContainer = document.getElementById("stars");
+                const starCount = 100;
+
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement("div");
+                    star.className = "star";
+
+                    // Random position
+                    star.style.left = Math.random() * 100 + "%";
+                    star.style.top = Math.random() * 100 + "%";
+
+                    // Random animation delay
+                    star.style.animationDelay = Math.random() * 4 + "s";
+
+                    // Random size variation
+                    const size = Math.random() * 2 + 1;
+                    star.style.width = size + "px";
+                    star.style.height = size + "px";
+
+                    starsContainer.appendChild(star);
+                }
+            }
+
+            // Smooth scroll for anchor links
+            document.addEventListener("DOMContentLoaded", function () {
+                createStars();
+
+                // Add smooth scrolling to any internal links
+                document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                    anchor.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(
+                            this.getAttribute("href"),
+                        );
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
+                        }
+                    });
+                });
+            });
+
+            // Add subtle parallax effect to hero section
+            window.addEventListener("scroll", function () {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector(".hero");
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        </script>
+    </body>
+</html>

@@ -70,20 +70,20 @@ cargo run -p almagest --example tether_materials  # Run CLI example
 
 The project has comprehensive testing at multiple levels:
 
-**Core Library Tests** (52 tests total):
+**Core Library Tests**
 ```sh
 cargo test -p almagest
 # Tests: units, materials, orbital mechanics, tether calculations
 ```
 
-**WASM Interface Tests** (4 native interface tests):
+**WASM Interface Tests**
 ```sh
 cd almagest-wasm
 cargo test
 # Tests: JS-Rust data conversion, interface logic validation
 ```
 
-**WASM Integration Tests** (12 WASM-specific tests):
+**WASM Integration Tests**
 ```sh
 cd almagest-wasm
 wasm-pack test --node
