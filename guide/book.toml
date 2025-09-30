@@ -1,0 +1,5 @@
+[book]
+authors = ["chrisbodhi"]
+language = "en"
+src = "src"
+title = "The Almagest Guide"
