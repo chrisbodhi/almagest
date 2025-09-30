@@ -24,6 +24,7 @@
 //! | [`Kilograms`] | kilogram | kg | Mass |
 //! | [`KilogramsPerMetersCubed`] | kg/m³ | kg/m³ | Density |
 //! | [`MetersPerSecond`] | meter per second | m/s | Velocity, speed |
+//! | [`MetersPerSecondSquared`] | meter per second squared | m/s² | Acceleration, gravity |
 //! | [`MetersCubedByKilogramSecondsSquared`] | m³/(kg·s²) | m³/(kg·s²) | Gravitational parameter |
 //!
 //! ## Mathematical Operations
@@ -71,6 +72,13 @@ pub const TAU: Real = 6.28318530717958647692528676655900577;
 #[allow(clippy::excessive_precision)]
 pub const E: Real = 2.71828182845904523536028747135266250;
 
+/// Length measurement in centimeters.
+///
+/// Used for small distances and material lengths/thicknesses
+/// where meter values would be unwieldy.
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct Centimeters(pub Real);
+
 /// Length measurement in meters.
 ///
 /// Used for distances, radii, altitudes, and other linear measurements.
@@ -92,6 +100,12 @@ pub struct Meters(pub Real);
 /// would be unwieldy.
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Kilometers(pub Real);
+
+/// Area measurement in square centimeters.
+///
+/// Used for cross-sectional areas, surface areas, etc.
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct CentimetersSquared(pub Real);
 
 /// Area measurement in square meters.
 ///
@@ -125,6 +139,7 @@ pub struct MetersCubed(pub Real);
 pub struct Pascals(pub Real);
 
 /// Force per unit area in N/m² (equivalent to [`Pascals`]).
+/// (Newtons are equivalent to kg·m/s²)
 ///
 /// Provided for situations where the force-per-area interpretation
 /// is more natural than pressure.
@@ -173,6 +188,18 @@ pub struct MetersCubedByKilogramSecondsSquared(pub Real);
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct MetersPerSecond(pub Real);
 
+/// Acceleration measurement in m/s².
+///
+/// Used for acceleration (positive), deceleration (negative), and gravity.
+///
+/// # Examples
+/// ```rust
+/// use almagest::utils::MetersPerSecondSquared;
+///
+/// let earth_gravity = MetersPerSecondSquared(9.81);
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct MetersPerSecondSquared(pub Real);
+
 /// Time measurement in seconds.
 ///
 /// Used for orbital periods, time intervals, and duration calculations.
@@ -218,9 +245,6 @@ impl RadiansPerSecond {
     }
 }
 
-pub struct M3ByKgS2(pub Real);
-pub struct M3(pub Real);
-
 pub const G: MetersCubedByKilogramSecondsSquared = MetersCubedByKilogramSecondsSquared(6.6742e-11);
 
 impl Pascals {
@@ -247,15 +271,29 @@ impl Mul<Real> for Pascals {
     }
 }
 
+impl Kilometers {
+    pub const fn value(&self) -> Real {
+        self.0
+    }
+}
+
+impl From<Kilometers> for Meters {
+    fn from(km: Kilometers) -> Self {
+        Meters(km.value() * 1_000.0)
+    }
+}
+
 impl Meters {
     pub const ZERO: Self = Meters(0.0);
 
-    pub fn to_km(&self) -> Kilometers {
-        Kilometers(self.value() / 1_000.0)
-    }
-
-    pub fn value(&self) -> Real {
+    pub const fn value(&self) -> Real {
         self.0
+    }
+}
+
+impl From<Meters> for Kilometers {
+    fn from(m: Meters) -> Self {
+        Kilometers(m.value() / 1_000.0)
     }
 }
 
@@ -317,10 +355,28 @@ impl Display for MetersCubed {
     }
 }
 
+impl CentimetersSquared {
+    pub const fn value(&self) -> Real {
+        self.0
+    }
+}
+
 // MetersSquared operations
 impl MetersSquared {
     pub const fn value(self) -> Real {
         self.0
+    }
+}
+
+impl From<MetersSquared> for CentimetersSquared {
+    fn from(m2: MetersSquared) -> Self {
+        CentimetersSquared(m2.value() * 10_000.0)
+    }
+}
+
+impl From<CentimetersSquared> for MetersSquared {
+    fn from(cm2: CentimetersSquared) -> Self {
+        MetersSquared(cm2.value() * 1e-4)
     }
 }
 
@@ -489,13 +545,14 @@ mod test_units {
     fn meters_convert_to_km() {
         let m = Meters(1_000.0);
         let km = Kilometers(1.0);
-        assert_eq!(m.to_km(), km);
+        let expected: Kilometers = m.into();
+        assert_eq!(expected, km);
     }
 
     #[test]
     fn meters_convert_precision() {
         let m = Meters(1_234.567);
-        let km = m.to_km();
+        let km: Kilometers = m.into();
         assert_relative_eq!(km.0, 1.234567, epsilon = 1e-10);
     }
 
