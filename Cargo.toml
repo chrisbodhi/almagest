@@ -1,5 +1,5 @@
 [workspace]
-members = ["almagest", "almagest-wasm", "guide", "modeling"]
+members = ["almagest", "almagest-wasm", "modeling"]
 resolver = "2"
 
 [workspace.package]
