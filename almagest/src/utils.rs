@@ -62,15 +62,12 @@ use core::ops::{Add, Div, Mul, Sub};
 pub type Real = f64;
 
 /// Archimedes’ constant (π)
-#[allow(clippy::excessive_precision)]
-pub const PI: Real = 3.14159265358979323846264338327950288;
+pub const PI: Real = core::f64::consts::PI;
 /// The full circle constant (τ)
 /// Equal to 2π.
-#[allow(clippy::excessive_precision)]
-pub const TAU: Real = 6.28318530717958647692528676655900577;
+pub const TAU: Real = core::f64::consts::TAU;
 /// Euler's number (e)
-#[allow(clippy::excessive_precision)]
-pub const E: Real = 2.71828182845904523536028747135266250;
+pub const E: Real = core::f64::consts::E;
 
 /// Length measurement in centimeters.
 ///
