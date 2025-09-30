@@ -1,0 +1,10 @@
+[package]
+name = "modeling"
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+almagest.workspace = true

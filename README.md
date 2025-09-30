@@ -14,10 +14,12 @@ Rust edition 2024
 
 ## Overview
 
-Almagest is a Rust workspace for astrodynamics, providing tools for orbit determination, propagation, and analysis. The workspace contains two crates:
+Almagest is a Rust workspace for astrodynamics, providing tools for orbit determination, propagation, and analysis. The workspace contains four crates:
 
-- **`almagest`** - Core orbital mechanics library (`no_std`, pure Rust)
-- **`almagest-wasm`** - WebAssembly bindings for web applications
+1. **`almagest`** - Core orbital mechanics library (`no_std`, pure Rust)
+1. **`almagest-wasm`** - WebAssembly bindings for web applications
+1. **`guide`** - A guide to using Almagest and its application for momentum-exchange tethers
+1. **`modeling`** - Computational orbital models of various fidelity, built using `almagest`
 
 The core library is written without the usage of the `std` library, relying on the `no_std` feature for minimal dependencies and maximum deployment flexibility.
 
@@ -61,9 +63,10 @@ cargo build
 cargo test
 
 # Work with specific crates
-cargo build -p almagest          # Core library only
-cargo test -p almagest           # Test core library
+cargo build -p almagest         # Core library only
+cargo test -p almagest          # Test core library
 cargo run -p almagest --example tether_materials  # Run CLI example
+cargo install mdbook            # For working with `guide`
 ```
 
 #### Testing Strategy
@@ -103,6 +106,13 @@ cd almagest-wasm && wasm-pack test --node
 
 ```sh
 cargo doc --open
+```
+
+### Run the Guide locally
+
+```sh
+cd guide
+mdbook serve --open
 ```
 
 ### Build for WebAssembly

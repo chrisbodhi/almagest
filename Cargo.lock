@@ -96,6 +96,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "modeling"
+version = "0.0.1"
+dependencies = [
+ "almagest",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
