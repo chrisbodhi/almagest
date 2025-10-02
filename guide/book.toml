@@ -3,3 +3,6 @@ authors = ["chrisbodhi"]
 language = "en"
 src = "src"
 title = "The Almagest Guide"
+
+[output.html]
+additional_css = "theme/fonts/fonts.css"
