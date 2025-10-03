@@ -8,3 +8,4 @@ version.workspace = true
 
 [dependencies]
 almagest.workspace = true
+libm.workspace = true
