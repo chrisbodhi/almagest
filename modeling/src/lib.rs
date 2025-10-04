@@ -172,6 +172,12 @@ impl Moon {
     }
 }
 
+impl Default for Moon {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// The payload consists of the thing being carried and the thing doing the carrying.
 ///   - mass
 ///   - velocity
@@ -211,7 +217,7 @@ mod tests {
         /// Test basic momentum conservation: impulse should increase with rotational velocity
         #[test]
         fn impulse_increases_with_rotational_velocity() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             let payload = Payload::new(Kilograms(1000.0), MetersPerSecond(0.0));
 
             let tether_slow = Tether::new(
@@ -242,7 +248,7 @@ mod tests {
         /// Test mass ratio effect: heavier tether should transfer more momentum
         #[test]
         fn heavier_tether_increases_efficiency() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             let payload = Payload::new(Kilograms(1000.0), MetersPerSecond(0.0));
 
             let tether_light = Tether::new(
@@ -275,7 +281,7 @@ mod tests {
         /// Typical lunar tether: 100km altitude, 100km length, rotating at ~1.6 km/s tip speed
         #[test]
         fn moravec_lunar_tether_scenario() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             // Small payload (e.g., sample return capsule)
             let payload = Payload::new(Kilograms(500.0), MetersPerSecond(0.0));
 
@@ -305,7 +311,7 @@ mod tests {
         /// Test if aggressive tether can provide sufficient delta-v
         #[test]
         fn lunar_escape_capability() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             let payload = Payload::new(Kilograms(1000.0), MetersPerSecond(0.0));
 
             // Aggressive tether design for escape missions
@@ -332,7 +338,7 @@ mod tests {
         /// Should approach full rotational velocity transfer
         #[test]
         fn light_payload_high_efficiency() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             // Very light payload relative to tether
             let payload = Payload::new(Kilograms(10.0), MetersPerSecond(0.0));
 
@@ -360,7 +366,7 @@ mod tests {
         /// Test with heavy payload (low efficiency)
         #[test]
         fn heavy_payload_reduced_efficiency() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             // Heavy payload equal to tether mass
             let payload = Payload::new(Kilograms(10_000.0), MetersPerSecond(0.0));
 
@@ -387,7 +393,7 @@ mod tests {
         /// Test altitude effect: higher orbits have lower orbital velocities
         #[test]
         fn altitude_affects_baseline_velocity() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             let payload = Payload::new(Kilograms(1000.0), MetersPerSecond(0.0));
 
             let tether_low = Tether::new(
@@ -424,7 +430,7 @@ mod tests {
         /// Hoyt & Forward (2000): "Mass ratio of 100:1 provides ~99% efficiency"
         #[test]
         fn validate_hoyt_forward_efficiency() {
-            let moon = Moon::new();
+            let moon = Moon::default();
             let payload = Payload::new(Kilograms(100.0), MetersPerSecond(0.0));
 
             let tether_light = Tether::new(
