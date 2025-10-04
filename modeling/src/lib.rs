@@ -163,7 +163,7 @@ pub struct Moon {
 }
 
 impl Moon {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             mass: Kilograms(7.348e22),
             radius: Kilometers(1_737.5),
