@@ -281,11 +281,11 @@ mod tests {
 
             // Realistic lunar tether parameters
             let tether = Tether::new(
-                Kilometers(100.0),          // Low lunar orbit
-                Kilometers(100.0),          // 100km total length
-                Kilograms(20_000.0),        // ~20 ton tether
+                Kilometers(100.0),   // Low lunar orbit
+                Kilometers(100.0),   // 100km total length
+                Kilograms(20_000.0), // ~20 ton tether
                 KEVLAR_49,
-                MetersPerSecond(1600.0),    // 1.6 km/s tip velocity
+                MetersPerSecond(1600.0), // 1.6 km/s tip velocity
             );
 
             let impulse = tether.calc_impulse(payload, moon);
@@ -311,10 +311,10 @@ mod tests {
             // Aggressive tether design for escape missions
             let tether = Tether::new(
                 Kilometers(100.0),
-                Kilometers(150.0),          // Longer tether
-                Kilograms(100_000.0),       // Heavy tether for efficiency
+                Kilometers(150.0),    // Longer tether
+                Kilograms(100_000.0), // Heavy tether for efficiency
                 KEVLAR_49,
-                MetersPerSecond(2500.0),    // High tip speed
+                MetersPerSecond(2500.0), // High tip speed
             );
 
             let impulse = tether.calc_impulse(payload, moon);
@@ -339,7 +339,7 @@ mod tests {
             let tether = Tether::new(
                 Kilometers(100.0),
                 Kilometers(100.0),
-                Kilograms(50_000.0),        // 5000:1 mass ratio
+                Kilograms(50_000.0), // 5000:1 mass ratio
                 KEVLAR_49,
                 MetersPerSecond(1000.0),
             );
@@ -367,7 +367,7 @@ mod tests {
             let tether = Tether::new(
                 Kilometers(100.0),
                 Kilometers(100.0),
-                Kilograms(10_000.0),        // 1:1 mass ratio
+                Kilograms(10_000.0), // 1:1 mass ratio
                 KEVLAR_49,
                 MetersPerSecond(1000.0),
             );
@@ -391,7 +391,7 @@ mod tests {
             let payload = Payload::new(Kilograms(1000.0), MetersPerSecond(0.0));
 
             let tether_low = Tether::new(
-                Kilometers(50.0),           // Lower orbit (faster)
+                Kilometers(50.0), // Lower orbit (faster)
                 Kilometers(100.0),
                 Kilograms(20_000.0),
                 KEVLAR_49,
@@ -399,7 +399,7 @@ mod tests {
             );
 
             let tether_high = Tether::new(
-                Kilometers(500.0),          // Higher orbit (slower)
+                Kilometers(500.0), // Higher orbit (slower)
                 Kilometers(100.0),
                 Kilograms(20_000.0),
                 KEVLAR_49,
@@ -430,7 +430,7 @@ mod tests {
             let tether_light = Tether::new(
                 Kilometers(100.0),
                 Kilometers(100.0),
-                Kilograms(1_000.0),         // 10:1 mass ratio
+                Kilograms(1_000.0), // 10:1 mass ratio
                 KEVLAR_49,
                 MetersPerSecond(1500.0),
             );
@@ -438,7 +438,7 @@ mod tests {
             let tether_heavy = Tether::new(
                 Kilometers(100.0),
                 Kilometers(100.0),
-                Kilograms(10_000.0),        // 100:1 mass ratio
+                Kilograms(10_000.0), // 100:1 mass ratio
                 KEVLAR_49,
                 MetersPerSecond(1500.0),
             );
