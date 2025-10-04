@@ -8,7 +8,7 @@ use almagest::{
     kepler::{Ellipse, Point},
     materials::{fibers, metals},
     tethers::{characteristic_velocity, characteristic_velocity_for_material},
-    utils::{Eccentricity, KilogramsPerMetersCubed, Meters, Pascals},
+    utils::{Eccentricity, KilogramsPerMetersCubed, Kilometers, Meters, Pascals},
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -84,7 +84,7 @@ fn demo_units() {
     );
 
     // Unit conversion
-    let distance_km = earth_radius.to_km();
+    let distance_km: Kilometers = earth_radius.into();
     println!("Earth radius: {} km", distance_km.0);
 }
 
@@ -102,14 +102,15 @@ fn demo_orbital_mechanics() -> Result<(), &'static str> {
         Meters(6_671_000.0), // ~300 km altitude
     );
 
+    let semi_major: Kilometers = leo.semi_major_axis().into();
+    let peri: Kilometers = leo.periapsis().into();
+    let apo: Kilometers = leo.apoapsis().into();
+
     println!("LEO (circular orbit):");
-    println!(
-        "  Semi-major axis: {:.0} km",
-        leo.semi_major_axis().to_km().0
-    );
+    println!("  Semi-major axis: {:.0} km", semi_major.value());
     println!("  Eccentricity: {:.3}", leo.eccentricity().value());
-    println!("  Periapsis: {:.0} km", leo.periapsis().to_km().0);
-    println!("  Apoapsis: {:.0} km", leo.apoapsis().to_km().0);
+    println!("  Periapsis: {:.0} km", peri.value());
+    println!("  Apoapsis: {:.0} km", apo.value());
 
     // Geostationary Transfer Orbit
     let gto = Ellipse::from_periapsis_apoapsis(
@@ -121,16 +122,13 @@ fn demo_orbital_mechanics() -> Result<(), &'static str> {
         },
     );
 
+    let gto_semi: Kilometers = gto.semi_major_axis().into();
+    let gto_semi_minor: Kilometers = gto.semi_minor_axis().into();
+
     println!("\nGTO (elliptical transfer orbit):");
-    println!(
-        "  Semi-major axis: {:.0} km",
-        gto.semi_major_axis().to_km().0
-    );
+    println!("  Semi-major axis: {:.0} km", gto_semi.value());
     println!("  Eccentricity: {:.4}", gto.eccentricity().value());
-    println!(
-        "  Semi-minor axis: {:.0} km",
-        gto.semi_minor_axis().to_km().0
-    );
+    println!("  Semi-minor axis: {:.0} km", gto_semi_minor.value());
 
     Ok(())
 }
