@@ -26,9 +26,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
