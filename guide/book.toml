@@ -9,6 +9,7 @@ extra-watch-dirs = ["../almagest/src"]
 
 [output.html]
 additional_css = "theme/fonts/fonts.css"
+site-url = "/almagest/"
 
 [rust]
 edition = "2024"
