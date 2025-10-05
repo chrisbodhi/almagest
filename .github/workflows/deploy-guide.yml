@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'guide/**'
-      - '.github/workflows/deploy-guide.yml'
+      - "guide/**"
+      - ".github/workflows/deploy-guide.yml"
   workflow_dispatch:
 
 permissions:
@@ -26,10 +26,18 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: 'latest'
+          mdbook-version: "latest"
+
+      - name: Test book
+        run: |
+          cd guide
+          mdbook test
 
       - name: Build book
         run: |

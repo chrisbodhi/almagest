@@ -4,5 +4,11 @@ language = "en"
 src = "src"
 title = "The Almagest Guide"
 
+[build]
+extra-watch-dirs = ["../almagest/src"]
+
 [output.html]
 additional_css = "theme/fonts/fonts.css"
+
+[rust]
+edition = "2024"
