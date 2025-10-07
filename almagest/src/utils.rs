@@ -280,6 +280,13 @@ impl From<Kilometers> for Meters {
     }
 }
 
+impl Add for Kilometers {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Kilometers(self.0 + rhs.0)
+    }
+}
+
 impl Meters {
     pub const ZERO: Self = Meters(0.0);
 

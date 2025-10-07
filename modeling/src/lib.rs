@@ -98,7 +98,7 @@ impl Tether {
     /// The delta-v imparted to the payload in m/s
     pub fn calc_impulse(&self, payload: Payload, body: Moon) -> MetersPerSecond {
         // Calculate orbital velocity at the tether's center altitude
-        let orbit_radius = Meters((body.radius.0 + self.altitude.0) * 1000.0); // Convert km to m
+        let orbit_radius: Meters = (body.radius + self.altitude).into(); // Convert km to m
         let gravitational_parameter = body.mass.0 * 6.67430e-11; // G * M
 
         // Orbital velocity at center: v = √(μ/r)
