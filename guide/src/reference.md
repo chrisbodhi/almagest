@@ -8,3 +8,4 @@
 | √ | Square root | Option + v | macOS 15 |
 | µ | Gravitational constant | Option + m | macOS 15 |
 | ∆ | delta | Option + j | macOS 15 |
+| π | ratio of circle's circumference to its radius | Option + p | macOS 15 |
