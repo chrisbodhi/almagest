@@ -35,28 +35,29 @@
 //!
 //! Values are given in SI units with sufficient precision for most astrodynamics applications.
 
-use crate::utils::{Kilograms, Kilometers};
+use crate::utils::{Kilograms, Kilometers, MetersCubedPerSecondSquared};
 
 /// Represents a celestial body with fundamental physical properties.
 ///
 /// Contains the basic properties needed for most astrodynamics calculations:
-/// mass, radius, and a human-readable name.
+/// mass, radius, standard gravitational parameter (μ), and a human-readable name.
 ///
 /// # Examples
 ///
 /// ```rust
 /// use almagest::celestials::{CelestialBody, celestial_bodies::EARTH};
-/// use almagest::utils::{Kilograms, Kilometers};
+/// use almagest::utils::{Kilograms, Kilometers, MetersCubedPerSecondSquared};
 ///
 /// // Using predefined bodies
 /// let earth = EARTH;
-/// println!("{} has mass {:.2e} kg", earth.name, earth.mass.0);
+/// println!("{} has μ = {:.3e} m³/s²", earth.name, earth.mu.value());
 ///
 /// // Creating custom bodies
 /// let custom_body = CelestialBody {
 ///     name: "Asteroid Ceres",
 ///     mass: Kilograms(9.1e20),      // kg
 ///     radius: Kilometers(473.0),    // km (mean radius)
+///     mu: MetersCubedPerSecondSquared(6.3e10), // m³/s²
 /// };
 /// ```
 #[derive(Debug)]
@@ -67,6 +68,8 @@ pub struct CelestialBody<'a> {
     pub mass: Kilograms,
     /// Mean radius in kilometers
     pub radius: Kilometers,
+    /// Standard gravitational parameter (μ = GM) in m³/s²
+    pub mu: MetersCubedPerSecondSquared,
 }
 
 /// Pre-defined celestial bodies with accurate physical properties.
@@ -83,7 +86,7 @@ pub mod celestial_bodies {
     /// - **Radius**: 6,371 km (mean radius)
     /// - **Surface gravity**: ~9.81 m/s²
     /// - **Escape velocity**: ~11.2 km/s
-    /// - **Standard gravitational parameter (μ)**: 398,600.4418 km³/s²
+    /// - **Standard gravitational parameter (μ)**: 3.986004418×10¹⁴ m³/s²
     ///
     /// # References
     /// - IAU 2015 Resolution B3
@@ -92,6 +95,7 @@ pub mod celestial_bodies {
         name: "Earth",
         mass: Kilograms(5.972e24),
         radius: Kilometers(6_371.0),
+        mu: MetersCubedPerSecondSquared(3.986004418e14),
     };
 
     /// Mars - Fourth planet from the Sun, "The Red Planet"
@@ -102,7 +106,7 @@ pub mod celestial_bodies {
     /// - **Surface gravity**: ~3.71 m/s² (38% of Earth's)
     /// - **Escape velocity**: ~5.03 km/s
     /// - **Day length**: ~24.62 hours (1.026 Earth days)
-    /// - **Standard gravitational parameter (μ)**: 42,828.37 km³/s²
+    /// - **Standard gravitational parameter (μ)**: 4.282837×10¹³ m³/s²
     ///
     /// # References
     /// - NASA Mars Fact Sheet
@@ -111,6 +115,7 @@ pub mod celestial_bodies {
         name: "Mars",
         mass: Kilograms(6.417e23),
         radius: Kilometers(3_390.0),
+        mu: MetersCubedPerSecondSquared(4.282837e13),
     };
 
     /// Moon - Earth's natural satellite
@@ -121,7 +126,7 @@ pub mod celestial_bodies {
     /// - **Surface gravity**: ~1.62 m/s² (16.5% of Earth's)
     /// - **Escape velocity**: ~2.38 km/s
     /// - **Orbital distance**: ~384,400 km from Earth (mean)
-    /// - **Standard gravitational parameter (μ)**: 4,902.8 km³/s²
+    /// - **Standard gravitational parameter (μ)**: 4.9028×10¹² m³/s²
     ///
     /// # References
     /// - NASA Moon Fact Sheet
@@ -130,5 +135,6 @@ pub mod celestial_bodies {
         name: "Moon",
         mass: Kilograms(7.35e22),
         radius: Kilometers(1_737.48),
+        mu: MetersCubedPerSecondSquared(4.9028e12),
     };
 }

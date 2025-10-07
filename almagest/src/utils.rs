@@ -25,7 +25,8 @@
 //! | [`KilogramsPerMetersCubed`] | kg/m³ | kg/m³ | Density |
 //! | [`MetersPerSecond`] | meter per second | m/s | Velocity, speed |
 //! | [`MetersPerSecondSquared`] | meter per second squared | m/s² | Acceleration, gravity |
-//! | [`MetersCubedByKilogramSecondsSquared`] | m³/(kg·s²) | m³/(kg·s²) | Gravitational parameter |
+//! | [`MetersCubedByKilogramSecondsSquared`] | m³/(kg·s²) | m³/(kg·s²) | Gravitational constant G |
+//! | [`MetersCubedPerSecondSquared`] | m³/s² | m³/s² | Standard gravitational parameter μ |
 //!
 //! ## Mathematical Operations
 //!
@@ -170,6 +171,32 @@ pub struct KilogramsPerMetersCubed(pub Real);
 /// and M is the mass of the central body.
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct MetersCubedByKilogramSecondsSquared(pub Real);
+
+/// Standard gravitational parameter in m³/s².
+///
+/// The standard gravitational parameter μ = GM is the product of the gravitational
+/// constant and the mass of a celestial body. It appears frequently in orbital
+/// mechanics equations and can be measured more precisely than G and M separately.
+///
+/// Common values:
+/// - Earth: 3.986004418×10¹⁴ m³/s²
+/// - Sun: 1.32712440018×10²⁰ m³/s²
+/// - Moon: 4.9028×10¹² m³/s²
+///
+/// # Examples
+/// ```rust
+/// use almagest::utils::MetersCubedPerSecondSquared;
+///
+/// let earth_mu = MetersCubedPerSecondSquared(3.986004418e14);
+/// ```
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
+pub struct MetersCubedPerSecondSquared(pub Real);
+
+impl MetersCubedPerSecondSquared {
+    pub const fn value(&self) -> Real {
+        self.0
+    }
+}
 
 /// Velocity measurement in m/s.
 ///
