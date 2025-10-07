@@ -9,6 +9,7 @@ extra-watch-dirs = ["../almagest/src"]
 
 [output.html]
 additional_css = "theme/fonts/fonts.css"
+mathjax-support = true
 site-url = "/almagest/"
 
 [rust]

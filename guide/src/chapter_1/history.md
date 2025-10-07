@@ -15,13 +15,20 @@ fn main() {
 ## Example code that can be run, but is tedious
 
 This is tedious because so much needs to be imported, line by line.
+It's also brittle because changes to the source code necessitate
+changes here. rustdocs support annotating source code to signal
+which source code to import, but that might be mixing concerns.
+See [the examples using anchors here](https://rust-lang.github.io/mdBook/format/mdbook.html#including-portions-of-a-file).
 We can hide that from the user by using the `hidden` attribute on
 the code block.
 
 ```rust,runnable
-{{#include ../../../almagest/src/utils.rs:62}}
-{{#include ../../../almagest/src/utils.rs:212}}
-{{#include ../../../almagest/src/utils.rs:233:237}}
+// pub type Real
+{{#include ../../../almagest/src/utils.rs:63}}
+// pub struct Seconds
+{{#include ../../../almagest/src/utils.rs:239}}
+// impl Seconds {...
+{{#include ../../../almagest/src/utils.rs:260:264}}
 println!("{} Seconds", Seconds(44.0).value());
 ```
 
