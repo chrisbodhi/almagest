@@ -102,6 +102,7 @@ impl Tether {
         let gravitational_parameter = body.mass.0 * 6.67430e-11; // G * M
 
         // Orbital velocity at center: v = √(μ/r)
+        // TODO: extract to a helper function
         let orbital_velocity = libm::sqrt(gravitational_parameter / orbit_radius.0);
 
         // Calculate the tip position (assuming release from upper tip)
